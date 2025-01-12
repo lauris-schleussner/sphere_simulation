@@ -1,2 +1,7 @@
 __pycache__
 venv
+__pycache__/ConfigReader.cpython-310.pyc
+__pycache__/Simulator.cpython-310.pyc
+__pycache__/Sphere.cpython-310.pyc
+__pycache__/SphereFactory.cpython-310.pyc
+__pycache__/view.cpython-310.pyc
