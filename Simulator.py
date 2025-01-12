@@ -2,6 +2,7 @@ import numpy as np
 import math
 import itertools
 import view
+import vpython as vp
 
 # contains all the logic for SimObjects interacting with eachother
 class Simulator:
@@ -39,7 +40,11 @@ class Simulator:
             n = self._collision_normal(A.position, B.position)
             new_velocity_A = A.movement - (2 * B.weight/ A.weight + B.weight) * ((A.movement - B.movement) * n) * n
             new_velocity_B = B.movement + (2 * A.weight/ A.weight + B.weight) * ((A.movement - B.movement) * n) * n
-            print("Sphere collisiosn detected")
+            print("Sphere collision detected")
+            
+            # move back half a timestep
+            A.set_position(A.position - 0.5 * A.movement * self.timestep)
+            B.set_position(B.position - 0.5 * B.movement * self.timestep)
 
             A.set_movement(new_velocity_A)
             B.set_movement(new_velocity_B)
@@ -103,15 +108,15 @@ class Simulator:
                 
     def start(self):
 
-        renderer = view.View()
+        renderer = view.View(self.simobjects)
 
         while True:
-            self.time += self.timestep
-            colissions = self.checkCollisions(self.simobjects)
-            self.resolveCollisions(colissions)
-
-            self.detectAndHandleWallCollisions(self.simobjects) 
-
-            self.advanceMovement()
-
-            renderer.render(self.simobjects)           
+                self.time += self.timestep
+                colissions = self.checkCollisions(self.simobjects)
+                self.resolveCollisions(colissions)
+                self.detectAndHandleWallCollisions(self.simobjects) 
+                self.advanceMovement()
+                
+                vp.rate(60)
+                renderer.render(self.simobjects)           
+            

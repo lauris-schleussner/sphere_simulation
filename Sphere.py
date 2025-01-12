@@ -10,10 +10,10 @@ class Sphere:
         self.movement = movement
 
     def set_position(self, position):
-        self.position = position
+        self.position = np.array(position)
     
     def set_movement(self, movement):
-        self.movement = movement
+        self.movement = np.array(movement)
 
     def __repr__(self):
         return f"Sphere (id = {self.id}, position = {self.position}, movement = {self.movement}, radius = {self.radius})"
