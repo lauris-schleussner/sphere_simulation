@@ -1,0 +1,101 @@
+GENERAL:
+  time_step:
+    value: 0.01
+    constraint: [0.0001, 1]
+
+  gravity:
+    value: 9.81
+    constraint: [0, 100]
+
+  elasticity:
+    value: 0.1
+    constraint: [0, 1]
+
+  xsize:
+    value: 10
+    constraint: [0, 100]
+
+  ysize:
+    value: 10
+    constraint: [0, 100]
+
+  zsize:
+    value: 10
+    constraint: [0, 100]
+
+SIMOBJECTS:
+  SIMOBJECT1:
+    mass:
+      value: 2.0
+      constraint: [0.01, 10]
+
+    radius:
+      value: 1
+      constraint: [0.01, 20]
+  
+    color: red
+
+    motion_vector:
+      value: [1, 2, 2]
+      constraint: [-10, 10]
+
+    position_vector:
+      value: [1, 2, 1]
+      constraint: [0, 100]
+
+  SIMOBJECT2:
+    mass:
+      value: 3.0
+      constraint: [0.01, 10]
+
+    radius:
+      value: 1
+      constraint: [0.01, 20]
+
+    color: blue
+
+    motion_vector:
+      value: [1, 1, 2]
+      constraint: [-10, 10]
+
+    position_vector:
+      value: [1, 5, 2]
+      constraint: [0, 100]
+
+  SIMOBJECT3:
+    mass:
+      value: 1.5
+      constraint: [0.01, 10]
+
+    radius:
+      value: 0.4
+      constraint: [0.01, 20]
+
+    color: green
+
+    motion_vector:
+      value: [20, 2, 1]
+      constraint: [-10, 100]
+
+    position_vector:
+      value: [3,7,12]
+      constraint: [0, 100]
+
+  SIMOBJECT4:
+    mass:
+      value: 0.2
+      constraint: [0.01, 10]
+
+    radius:
+      value: 1
+      constraint: [0.01, 20]
+
+    color: grey
+
+    motion_vector:
+      value: [2, 1, 1]
+      constraint: [-10, 10]
+
+    position_vector:
+      value: [4,9,9]
+      constraint: [0, 100]
