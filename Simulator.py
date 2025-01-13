@@ -108,7 +108,7 @@ class Simulator:
                 
     def start(self):
 
-        renderer = view.View(self.simobjects)
+        renderer = view.View()
 
         while True:
                 self.time += self.timestep
