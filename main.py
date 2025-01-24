@@ -1,16 +1,25 @@
 import ConfigReader
-import SphereFactory
+import SimobjectFactory
 import Simulator
 
 def main():
+    """
+    Main der Simulation. Diese Datei wird als erstes ausgeführt.
+    Sie ist verantwortlich für das Lesen der Config.yaml Datei, das Erstellen der Simulationsobjekte
+    und das Initialisieren/Starten der Simulation.
+    """
 
     # read and check validity
-    simulation_data = ConfigReader.ConfigReader.read_and_check()
+    config = ConfigReader.ConfigReader.read()
 
-    spheres = SphereFactory.SphereFactory.createSpheres(simulation_data)
+    # create simobjects
+    spheres = SimobjectFactory.SimobjectFactory.createSpheres(config["SIMOBJECTS"])
+    cubes = SimobjectFactory.SimobjectFactory.createCubes(config["SIMOBJECTS"])
 
-    simulator = Simulator.Simulator(simulation_data)
-    simulator.setup(spheres)
+    # initialize Simulator and add simobjects
+    simulator = Simulator.Simulator(config["GENERAL"])
+    simulator.addObjects(spheres)
+    simulator.addObjects(cubes)
     simulator.start()
 
 if __name__ == "__main__":

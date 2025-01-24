@@ -1,102 +1,45 @@
 GENERAL:
-  time_step:
-    value: 0.001
-    constraint: [0.0001, 1]
+  time_step: 0.001 # [0.01 - 0.0001]
+  restitution: 1 # [0 - 1]
+  size: 10 # [10-100]
 
-  gravity:
-    value: 9.81
-    constraint: [0, 100]
-
-  elasticity:
-    value: 0.1
-    constraint: [0, 1]
-
-  xsize:
-    value: 10
-    constraint: [0, 11]
-
-  ysize:
-    value: 10
-    constraint: [0, 11]
-
-  zsize:
-    value: 10
-    constraint: [0, 11]
 
 SIMOBJECTS:
   SIMOBJECT1:
-    mass:
-      value: 2.0
-      constraint: [0.01, 10]
+    type: sphere # [sphere, cube]
+    mass: 10 # > 0
+    radius: 1 # > 0, sollte nicht mit andern Objekten oder den Wänden überlappen
+    color: blue # [red, green, blue, yellow, cyan, magenta, black, white, gray, orange, purple]
+    motion_vector: [-50, 70, 20] # [-1000 - 1000] für jede Komponente
+    position_vector: [6, 6, 6] # Objekt sollte innerhalb der Simulation und ohne andere Objekte zu schneiden platziert sein
 
-    radius:
-      value: 0.5
-      constraint: [0.01, 20]
-  
-    color: red
-
-    motion_vector:
-      value: [-50, -50, -50]
-      constraint: [-100, 100]
-
-    position_vector:
-      value: [9, 9, 9]
-      constraint: [0, 10]
-
+  # Würfelobjekte besitzen weniger Attribute als Kugeln
   SIMOBJECT2:
-    mass:
-      value: 3.0
-      constraint: [0.01, 10]
-
-    radius:
-      value: 0.5
-      constraint: [0.01, 20]
-
-    color: blue
-
-    motion_vector:
-      value: [50, 50, 50]
-      constraint: [-100, 100]
-
-    position_vector:
-      value: [1, 1, 1]
-      constraint: [0, 10]
-
+    type: cube
+    color: white
+    sidelength: 2 # Würfel sollte so dimensioniert und platziert sein, dass er keine anderen Objekte schneidet/enthält
+    position_vector: [5, 5, 5]
 
   SIMOBJECT3:
-    mass:
-      value: 3.0
-      constraint: [0.01, 10]
-
-    radius:
-      value: 0.5
-      constraint: [0.01, 20]
-
-    color: blue
-
-    motion_vector:
-      value: [50, 50, 50]
-      constraint: [-100, 100]
-
-    position_vector:
-      value: [3, 2, 1]
-      constraint: [0, 10]
+    type: sphere
+    mass: 50
+    radius: 1
+    color: orange
+    motion_vector: [50, 50, 50]
+    position_vector: [3, 3, 3]
 
   SIMOBJECT4:
-    mass:
-      value: 9.0
-      constraint: [0.01, 10]
+    type: sphere
+    mass: 3
+    radius: 1
+    color: red
+    motion_vector: [50, 30, 20]
+    position_vector: [6, 3, 3]
 
-    radius:
-      value: 2
-      constraint: [0.01, 20]
-
-    color: blue
-
-    motion_vector:
-      value: [50, 50, 50]
-      constraint: [-100, 100]
-
-    position_vector:
-      value: [7, 7, 7]
-      constraint: [0, 10]
+  SIMOBJECT5:
+    type: sphere
+    mass: 5
+    radius: 1
+    color: green
+    motion_vector: [50, 50, 50]
+    position_vector: [7, 0, 7]
