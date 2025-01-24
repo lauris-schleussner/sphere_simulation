@@ -1,8 +1,6 @@
 import numpy as np
-import math
 import itertools
 import view
-import vpython as vp
 import Simobjects
 
 class Simulator:
@@ -273,5 +271,4 @@ class Simulator:
                 self.resolveSphereCubeCollisions(self.simobjects)
                 self.advanceMovement()
                 
-                vp.rate(60)
                 renderer.render(self.simobjects)           
