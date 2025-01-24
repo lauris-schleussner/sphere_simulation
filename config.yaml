@@ -36,8 +36,8 @@ SIMOBJECTS:
     color: red
 
     motion_vector:
-      value: [-5, -5, -5]
-      constraint: [-10, 10]
+      value: [-50, -50, -50]
+      constraint: [-100, 100]
 
     position_vector:
       value: [9, 9, 9]
@@ -55,9 +55,48 @@ SIMOBJECTS:
     color: blue
 
     motion_vector:
-      value: [5, 5, 5]
-      constraint: [-10, 10]
+      value: [50, 50, 50]
+      constraint: [-100, 100]
 
     position_vector:
       value: [1, 1, 1]
+      constraint: [0, 10]
+
+
+  SIMOBJECT3:
+    mass:
+      value: 3.0
+      constraint: [0.01, 10]
+
+    radius:
+      value: 0.5
+      constraint: [0.01, 20]
+
+    color: blue
+
+    motion_vector:
+      value: [50, 50, 50]
+      constraint: [-100, 100]
+
+    position_vector:
+      value: [3, 2, 1]
+      constraint: [0, 10]
+
+  SIMOBJECT4:
+    mass:
+      value: 9.0
+      constraint: [0.01, 10]
+
+    radius:
+      value: 2
+      constraint: [0.01, 20]
+
+    color: blue
+
+    motion_vector:
+      value: [50, 50, 50]
+      constraint: [-100, 100]
+
+    position_vector:
+      value: [7, 7, 7]
       constraint: [0, 10]

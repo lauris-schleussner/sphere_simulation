@@ -35,6 +35,20 @@ class View:
         gluPerspective(45, 800 / 600, 0.1, 50.0)  # Near and far clipping planes
         glMatrixMode(GL_MODELVIEW)
 
+        # Set up lighting
+        glEnable(GL_LIGHT0)    # Enable light source 0
+
+        # Define the light source properties
+        light_position = [1.0, 1.0, 1.0, 0.0]  # Directional light
+        light_ambient = [0.1, 0.1, 0.1, 1.0]
+        light_diffuse = [1.0, 1.0, 1.0, 1.0]
+        light_specular = [1.0, 1.0, 1.0, 1.0]
+
+        glLightfv(GL_LIGHT0, GL_POSITION, light_position)
+        glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient)
+        glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse)
+        glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular)
+
     def draw_wireframe_box(self, center, size):
         x, y, z = center
         s = size
@@ -112,6 +126,19 @@ class View:
 
         self.update_camera()
 
+        # Set material properties
+        material_ambient = [0.2, 0.2, 0.2, 1.0]
+        material_diffuse = [1.0, 0.0, 0.0, 1.0]  # Red color
+        material_specular = [1.0, 1.0, 1.0, 1.0]
+        material_shininess = [50.0]
+
+        glMaterialfv(GL_FRONT, GL_AMBIENT, material_ambient)
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, material_diffuse)
+        glMaterialfv(GL_FRONT, GL_SPECULAR, material_specular)
+        glMaterialfv(GL_FRONT, GL_SHININESS, material_shininess)
+
+        glEnable(GL_LIGHTING)  # Enable lighting
+
         # Render all spheres
         for sphere in spheres:
             glPushMatrix()
@@ -122,7 +149,11 @@ class View:
             gluDeleteQuadric(quadric)
             glPopMatrix()
     
-    
+        glDisable(GL_LIGHTING)
+        glMaterialfv(GL_FRONT, GL_AMBIENT, [0.2, 0.2, 0.2, 1.0])
+        glMaterialfv(GL_FRONT, GL_DIFFUSE, [0.0, 1.0, 0.0, 1.0])  # Green color
+        glMaterialfv(GL_FRONT, GL_SPECULAR, [0.0, 0.0, 0.0, 1.0])  # No specular reflection
+        glMaterialfv(GL_FRONT, GL_SHININESS, [0.0])                # Matte
         glColor4f(0.0, 1.0, 0.0, 0.5)           # wireframe is green and transparent
         self.draw_wireframe_box([5, 5, 5], 5)   # Center at (5, 5, 5) with size 5
             

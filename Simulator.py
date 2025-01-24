@@ -37,17 +37,23 @@ class Simulator:
     def resolveCollisions(self, collided_objects):
 
         for A, B in collided_objects:
-            n = self._collision_normal(A.position, B.position)
-            new_velocity_A = A.movement - (2 * B.weight/ A.weight + B.weight) * ((A.movement - B.movement) * n) * n
-            new_velocity_B = B.movement + (2 * A.weight/ A.weight + B.weight) * ((A.movement - B.movement) * n) * n
-            print("Sphere collision detected")
+            n = self._collision_normal(A.position, B.position)  # Ensure n is normalized
+            relative_velocity = A.movement - B.movement
+            mass_sum = A.weight + B.weight
+
+            # Compute new velocities using elastic collision equations
+            new_velocity_A = A.movement - (2 * B.weight / mass_sum) * (relative_velocity @ n) * n
+            new_velocity_B = B.movement + (2 * A.weight / mass_sum) * (relative_velocity @ n) * n
+
             
             # move back half a timestep
-            A.set_position(A.position - 0.5 * A.movement * self.timestep)
-            B.set_position(B.position - 0.5 * B.movement * self.timestep)
+            A.set_position(A.position - 1 * A.movement * self.timestep)
+            B.set_position(B.position - 1 * B.movement * self.timestep)
 
             A.set_movement(new_velocity_A)
             B.set_movement(new_velocity_B)
+
+            print(A.movement, B.movement)
 
     def detectAndHandleWallCollisions(self, simobjects):
         for simobject in simobjects:
