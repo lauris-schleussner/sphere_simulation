@@ -85,42 +85,25 @@ class Simulator:
         Um Doppelberechnung zu vermeiden werden zuerst alle Kugelpaarkombinationen generiert. (1,2) => (2,1) nicht enthalten 
         Für jedes Paar wird deren 3D Distanz berechnet. Ist diese kleiner als die Summer der Radi liegt eine Kollision vor.
         
-        Kollision wenn: ||A - B|| < r_A + r_B
+        Kollision wenn: |A - B| < r_A + r_B
         
         Um Doppeltberechnung bei Edgecases zu vermeiden, wird überprüft ob sich die beiden Kugeln entlang der Kolisionsnormale bereits voneinander entfernen.
         Fliegen sie nichtmehr aufeinander zu, kann die folgende Berechnung übersprungen werden.
         
-        Der Impulsbetrag der Kollision wird berechnet. Dabei wird die relative Geschwindigkeit, sowie Masse mit einbezogen 
+        Die Bewegung einer Kugel lässt sich auf zwei Vektoren aufteilen. Eine ortogonale Komponente entlang der Kolisionsnormalen und eine Parallelle Komponente welche orthogonal zu dieser liegt.
         
-        |p| = (-(1 + E) * ((v_A - v_B) x n)) / (1/m_A + 1/m_B)
+        u = l_o * u_o + l_p * u_p
         
-        |p| : Betrag des impulses
-        E : Elastizität
-        v_A, v_B Bewegungsvektoren
-        n : Kollisionsnormale
-        m_A/m_B : Massen
-        
-        Der Impuls wird für beide Objekte entland der Kolisionsnormale berechnet und je nach Masse skaliert. Jenachdem von welcher 
-        Seite die Kolision betrachtet wird, wird der impuls addiert/subtrahiert
-        
-        p = |p| * n
-        
-        v' = v +- p/m  
-        
-        Eine Kolision wird erst festgestellt, nachdem sich zwei kugeln bereits geschnitten haben. Um für dies zu korrigieren,
-        werden Die Kugeln entland der Kolisionsnormalen um einen kleinen Korrekturwert zurückgesetzt.
-        
-        d_p = r_A + r_B - ||A - B||
-        
-        A' = A +- d_p/2 * n
-        
-        d_p : Penetrationstiefe
-        r_A, r_B : Radi
-        ||A-B|| : distanz zwischen Mittelpunkten der Kugeln A und B
-        A', A : Position der Kugel
-        n : kolisionsnormale
-        
-        
+        Die orthogonale Komponente u_o entspricht der Kolisionsnormalen.
+        Aus dieser lässt sich die parallele Komponente berechnen. Für zentrale Kolisionen ist dieser Vektor 0
+
+        Die Beträge der paralellen bzw. ortogonalen Vektorkomponenten l_p, l_o berechnen sich aus den o.g Komponenten und der Position der Kugel
+        Analog können die Teilkomponenten des Bewegungsvektors der zweiten Kugel B berechnet werden.
+        Der Impulserhaltungssatz und Energieerhaltungssatz können umgestellt und ineinander eingesetzt werden.
+        In die resultierende Gleichung können die berechneten Vektoren sowie deren Massen eingesetzt werden um die neuen Bewegungsvektoren zu erhalten.
+
+        E_kin_A + E_kin_B = E_kin_A' + E_kin_B'
+        v_a * m_a + v_b * m_b = u_a * m_a + u_b + m_b
         """
         
         # only select spheres
@@ -135,31 +118,48 @@ class Simulator:
         
         # resolve collisions
         for A, B in collisions:
-            # Calculate collision normal
-            collision_normal = (A.position - B.position) / np.linalg.norm(A.position - B.position)
-
+            
             # Relative velocity along the normal
             relative_velocity = A.movement - B.movement
-            velocity_along_normal = np.dot(relative_velocity, collision_normal)
+            velocity_along_normal = np.dot(relative_velocity, self._collision_normal(A.movement, B.movement))
 
-            # Skip if objects are separating
+            # Skip if objects are already separating
             if velocity_along_normal > 0:
                 continue
 
-            # Calculate restitution and mass-related terms
-            impulse_magnitude = -(1 + self.restitution) * velocity_along_normal
-            impulse_magnitude /= 1 / A.weight + 1 / B.weight
-
-            # Apply impulses to each object
-            impulse = impulse_magnitude * collision_normal
-            A.movement = A.movement + impulse / A.weight
-            B.movement = B.movement - impulse / B.weight
-
-            # Adjust positions slightly to resolve overlap
-            penetration_depth = (A.radius + B.radius) - np.linalg.norm(A.position - B.position)
-            correction = (penetration_depth / 2) * collision_normal
-            A.position = A.position + correction
-            B.position = B.position - correction
+            # orthogonal component of A
+            ortho_vektor_a = self._collision_normal(A.position, B.position)
+            
+            # parallel component of A
+            if not np.all(np.cross(A.movement, ortho_vektor_a) == 0):
+                parallel_vektor_a = (np.cross(np.cross(A.movement, ortho_vektor_a), ortho_vektor_a)) / (np.linalg.norm(np.cross(np.cross(A.movement, ortho_vektor_a), ortho_vektor_a)))
+            else:
+                parallel_vektor_a = np.array([0,0,0])
+                
+            
+            # parallel component of B
+            if not np.all(np.cross(B.movement, ortho_vektor_a) == 0):
+                parallel_vektor_b = np.cross(np.cross(B.movement, ortho_vektor_a), ortho_vektor_a) / (np.linalg.norm(np.cross(np.cross(B.movement, ortho_vektor_a), ortho_vektor_a)))
+            else:
+                parallel_vektor_b = np.array([0,0,0])
+                
+                
+            # component lengths of A
+            ortho_length_a = ortho_vektor_a @ A.movement
+            parallel_length_a = parallel_vektor_a @ A.movement
+            
+            # component lengths of B
+            ortho_length_b = ortho_vektor_a @ B.movement
+            parallel_length_b = parallel_vektor_b @ B.movement
+            
+            # new movement
+            new_movement_a = ((ortho_length_a * A.weight + ortho_length_b * B.weight + (ortho_length_b - ortho_length_a) * B.weight * self.restitution) / (A.weight + B.weight)) * ortho_vektor_a + (parallel_length_a * parallel_vektor_a)
+            new_movement_b = ((ortho_length_a * A.weight + ortho_length_b * B.weight + (ortho_length_a - ortho_length_b) * A.weight * self.restitution) / (A.weight + B.weight)) * ortho_vektor_a + (parallel_length_b * parallel_vektor_b)
+            
+            A.movement = new_movement_a
+            B.movement = new_movement_b
+            
+        
 
     def resolveSphereWallCollisions(self, simobjects):
         """
@@ -180,7 +180,7 @@ class Simulator:
         Im nächsten Schritt wird die Bewegungskomponente in Kolisionsnormalenrichtung invertiert. Dadurch wird die Bewegung an der Wand reflektiert
         
         A.x = r_A       neue Position durch verändern der x Komponente bei Kolision mit x-Begrenzung
-        v.x' = -v.x     Neuer Bewegungsvektor durch invertieren der x Komponente bei KOlision mit x-Begrenzung
+        v.x' = -v.x * E     Neuer Bewegungsvektor durch invertieren der x Komponente bei KOlision mit x-Begrenzung
         """
         
         spheres = [obj for obj in simobjects if isinstance(obj, Simobjects.Sphere)]
@@ -228,7 +228,7 @@ class Simulator:
 
     def _collision_normal(self, A, B):
         """
-        Hilfsfunktion zur Berechnung der Kollisionsnormalen
+        Hilfsfunktion zur Berechnung der Kollisionsnormalen. Dieser Ist Der normierte Vektor durch den Punkt der Kolision vom Zentrum der Kugeln
         
         n = B-A / |B-A|
         
@@ -257,7 +257,8 @@ class Simulator:
             2. Kugel-Kugel Kolisionen behandeln
             3. Kugel-Wand Kollisionen behandeln
             4. Kugel-Würfel Kolisionen behandeln
-            5. Szene rendern 
+            5. Bewegung Ausführen
+            6. Szene rendern 
         """
 
         renderer = view.View(self.general_config)

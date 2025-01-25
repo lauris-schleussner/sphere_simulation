@@ -10,8 +10,8 @@ SIMOBJECTS:
     mass: 10 # > 0
     radius: 1 # > 0, sollte nicht mit andern Objekten oder den Wänden überlappen
     color: blue # [red, green, blue, yellow, cyan, magenta, black, white, gray, orange, purple]
-    motion_vector: [-50, 70, 20] # [-1000 - 1000] für jede Komponente
-    position_vector: [6, 6, 6] # Objekt sollte innerhalb der Simulation und ohne andere Objekte zu schneiden platziert sein
+    motion_vector: [-50, -40, -50] # [-1000 - 1000] für jede Komponente
+    position_vector: [-2, 2, -7] # Objekt sollte innerhalb der Simulation und ohne andere Objekte zu schneiden platziert sein
 
   # Würfelobjekte besitzen weniger Attribute als Kugeln
   SIMOBJECT2:
@@ -34,7 +34,7 @@ SIMOBJECTS:
     radius: 1
     color: red
     motion_vector: [50, 30, 20]
-    position_vector: [6, 3, 3]
+    position_vector: [6, 4, 4]
 
   SIMOBJECT5:
     type: sphere
